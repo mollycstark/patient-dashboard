@@ -8,23 +8,49 @@ A simple full-stack CRUD app for managing patient records. Built with **React (V
 
 Run frontend and backend separately (recommended for live pairing / fast dev):
 
-1. **Start Flask backend**
-   ```bash
-   cd patient-dashboard
-   python3 -m venv venv
-   source venv/bin/activate
-   pip3 install -r requirements.txt
-   python run.py
-   ```
+---
 
-2. **Start React frontend**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+### 1. **Start Flask backend**
 
-Frontend runs on `http://localhost:5173` and proxies `/api` requests to Flask running at `http://127.0.0.1:5000`.
+```bash
+cd patient-dashboard
+```
+
+If Python 3.11 is available globally:
+
+```bash
+python3 -m venv venv
+```
+
+If you're using Homebrew on macOS:
+
+```bash
+/opt/homebrew/opt/python@3.11/bin/python3.11 -m venv venv
+```
+
+Then activate the environment and install dependencies:
+
+```bash
+source venv/bin/activate
+pip install -r requirements.txt
+python run.py
+```
+
+---
+
+### 2. **Start React frontend**
+
+In a new terminal tab:
+
+```bash
+cd patient-dashboard/frontend
+npm install
+npm run dev
+```
+
+The frontend runs at `http://localhost:5173` and proxies API requests to the Flask backend at `http://127.0.0.1:5000`.
+
+---
 
 ### ✅ Implemented
 
@@ -44,6 +70,8 @@ Frontend runs on `http://localhost:5173` and proxies `/api` requests to Flask ru
 - Patient data persists across refreshes via database
 - Flask backend is structured to support lightweight unit tests (e.g. using `pytest` or Flask’s built-in test client)
 
+---
+
 ### ❓ Questions
 
 - Should address fields be broken into city/state/zip in the DB?
@@ -52,6 +80,8 @@ Frontend runs on `http://localhost:5173` and proxies `/api` requests to Flask ru
 - Should the table be sortable by columns (e.g. last name, DOB)?
 - Should providers be able to click into a detailed view of a patient?
 - Will multi-provider support (multi-tenancy) be needed?
+
+---
 
 ## 🛠️ Tech Stack
 
