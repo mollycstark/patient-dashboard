@@ -124,12 +124,13 @@ function App() {
             required
           />
           <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
+            <InputLabel id="status-label">Status</InputLabel>
             <Select
+              labelId="status-label"
               name="status"
               value={form.status}
               onChange={handleChange}
-              fullWidth
+              label="Status"
             >
               {["Inquiry", "Onboarding", "Active", "Churned"].map((status) => (
                 <MenuItem key={status} value={status}>
