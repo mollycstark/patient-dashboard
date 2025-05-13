@@ -4,7 +4,7 @@ A simple full-stack CRUD app for managing patient records. Built with **React (V
 
 ## 🚀 Running the App
 
-### Option 1: 🔧 Development Mode
+🔧 Development Mode
 
 Run frontend and backend separately (recommended for live pairing / fast dev):
 
@@ -24,24 +24,7 @@ Run frontend and backend separately (recommended for live pairing / fast dev):
    npm run dev
    ```
 
-Frontend runs on `localhost:5173` and proxies `/api` requests to Flask running at `http://127.0.0.1:5000`.
-
-### Option 2: 📦 Production Mode (for one-command run)
-
-Build the frontend and serve it via Flask:
-
-```bash
-cd frontend
-npm install
-npm run build
-mkdir -p ../static
-cp -r dist/* ../static/
-cd ..
-source venv/bin/activate
-python run.py
-```
-
-Everything runs from `http://127.0.0.1:5000/`.
+Frontend runs on `http://localhost:5173` and proxies `/api` requests to Flask running at `http://127.0.0.1:5000`.
 
 ### ✅ Implemented
 
@@ -59,6 +42,7 @@ Everything runs from `http://127.0.0.1:5000/`.
 - MUI used for layout and form components
   - Provides built-in validation and accessibility support
 - Patient data persists across refreshes via database
+- Flask backend is structured to support lightweight unit tests (e.g. using `pytest` or Flask’s built-in test client)
 
 ### ❓ Questions
 
