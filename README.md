@@ -34,13 +34,14 @@ Build the frontend and serve it via Flask:
 cd frontend
 npm install
 npm run build
+mkdir -p ../static
 cp -r dist/* ../static/
 cd ..
 source venv/bin/activate
 python run.py
 ```
 
-Everything runs from `http://localhost:5173/`.
+Everything runs from `http://127.0.0.1:5000/`.
 
 ### ✅ Implemented
 

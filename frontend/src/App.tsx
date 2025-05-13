@@ -16,7 +16,6 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-
 import type { SelectChangeEvent } from "@mui/material";
 
 type Patient = {
