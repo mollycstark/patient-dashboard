@@ -58,8 +58,9 @@ The frontend runs at `http://localhost:5173` and proxies API requests to the Fla
   - Middle name is optional
   - Auto-capitalized and trimmed for consistency
   - Character limits enforced at the database level (50 characters each)
+  - Future versions should prevent duplicate patient entries
 - Status is limited to 4 predefined values: Inquiry, Onboarding, Active, Churned
-- DOB is required, must be in the past, and uses a date picker
+- DOB is required, uses a date picker, and must not be in the future
 - Address is stored as a flat string
   - UI includes a format hint: "123 Main St, San Francisco, CA 94110"
   - Future versions may split this into structured fields

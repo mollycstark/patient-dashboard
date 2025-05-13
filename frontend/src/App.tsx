@@ -122,6 +122,9 @@ function App() {
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
             required
+            inputProps={{
+              max: new Date().toISOString().split("T")[0], // sets today as max
+            }}
           />
           <FormControl fullWidth>
             <InputLabel id="status-label">Status</InputLabel>
