@@ -17,6 +17,8 @@ import {
   InputLabel,
 } from "@mui/material";
 
+import type { SelectChangeEvent } from "@mui/material";
+
 type Patient = {
   id: number;
   first_name: string;
@@ -52,12 +54,12 @@ function App() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }
-    >
+    e:
+      | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      | SelectChangeEvent
   ) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name as string]: value }));
+    setForm((f) => ({ ...f, [name]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -128,8 +130,7 @@ function App() {
               name="status"
               value={form.status}
               onChange={handleChange}
-              label="Status"
-              required
+              fullWidth
             >
               {["Inquiry", "Onboarding", "Active", "Churned"].map((status) => (
                 <MenuItem key={status} value={status}>
