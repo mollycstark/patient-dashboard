@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import {
+  Box,
   Container,
   Typography,
   Stack,
@@ -41,13 +42,64 @@ function App() {
   const [form, setForm] = useState(defaultForm);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [providerId, setProviderId] = useState<number | null>(null);
+  const [isSignup, setIsSignup] = useState(false);
 
   useEffect(() => {
-    fetchPatients();
+    const storedId = localStorage.getItem("provider_id");
+    if (storedId) {
+      const parsedId = parseInt(storedId);
+      setProviderId(parsedId);
+      fetchPatients(parsedId);
+    }
   }, []);
 
-  const fetchPatients = () => {
-    fetch("/api/patients")
+  useEffect(() => {
+    if (providerId !== null) {
+      fetchPatients(providerId);
+    }
+  }, [providerId]);
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Signup failed");
+        setProviderId(data.provider_id);
+        localStorage.setItem("provider_id", data.provider_id.toString());
+        fetchPatients(data.provider_id);
+      })
+      .catch((err) => setError(err.message));
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Login failed");
+        setProviderId(data.provider_id);
+        localStorage.setItem("provider_id", data.provider_id.toString());
+        fetchPatients(data.provider_id);
+      })
+      .catch((err) => setError(err.message));
+  };
+
+  const fetchPatients = (id: number) => {
+    fetch(`/api/patients?provider_id=${id}`)
       .then((res) => res.json())
       .then((data) => setPatients(data));
   };
@@ -68,7 +120,7 @@ function App() {
     fetch("/api/patients", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, provider_id: providerId }),
     })
       .then(async (res) => {
         if (!res.ok) {
@@ -79,21 +131,104 @@ function App() {
       })
       .then(() => {
         setForm(defaultForm);
-        fetchPatients();
+        fetchPatients(providerId!);
       })
       .catch((err) => {
         setError(err.message);
       });
   };
 
+  if (providerId === null) {
+    return (
+      <Container maxWidth="sm" sx={{ mt: 6, mb: 6 }}>
+        <Typography variant="h5" gutterBottom>
+          {isSignup ? "Sign Up" : "Login"} to access the dashboard
+        </Typography>
+
+        <form onSubmit={isSignup ? handleSignup : handleLogin}>
+          <Stack spacing={2} sx={{ mt: 2 }}>
+            <TextField
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Button type="submit" variant="contained">
+              {isSignup ? "Sign Up" : "Login"}
+            </Button>
+
+            <Button variant="text" onClick={() => setIsSignup((prev) => !prev)}>
+              {isSignup
+                ? "Already have an account? Log in"
+                : "Don't have an account? Sign up"}
+            </Button>
+
+            {error && (
+              <Typography color="error" variant="body2">
+                {error}
+              </Typography>
+            )}
+          </Stack>
+        </form>
+      </Container>
+    );
+  }
+
   return (
     <Container maxWidth="sm" sx={{ mt: 4 }}>
+      {providerId === null && (
+        <form onSubmit={handleLogin}>
+          <Stack spacing={2} sx={{ mb: 4 }}>
+            <TextField
+              label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Button type="submit" variant="contained">
+              Login
+            </Button>
+            {error && <Typography color="error">{error}</Typography>}
+          </Stack>
+        </form>
+      )}
+      <Box display="flex" justifyContent="flex-end" sx={{ mb: 2 }}>
+        <Button
+          onClick={() => {
+            setProviderId(null);
+            localStorage.removeItem("provider_id");
+            setEmail("");
+            setPassword("");
+            setPatients([]);
+            setForm(defaultForm);
+            setError("");
+          }}
+          variant="outlined"
+          color="secondary"
+        >
+          Logout
+        </Button>
+      </Box>
       <Typography variant="h4" gutterBottom>
         Patient Dashboard
       </Typography>
 
       <form onSubmit={handleSubmit} autoComplete="off">
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{ width: "100%", maxWidth: 500 }}>
           <TextField
             label="First Name"
             name="first_name"

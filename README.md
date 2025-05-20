@@ -54,6 +54,9 @@ The frontend runs at `http://localhost:5173` and proxies API requests to the Fla
 
 ### ✅ Implemented
 
+- Added login/signup for providers using email and password
+  - Passwords are hashed with bcrypt
+- Each provider sees only their own patients
 - Name fields (first, middle, last) are stored separately
   - Middle name is optional
   - Auto-capitalized and trimmed for consistency
@@ -80,7 +83,6 @@ The frontend runs at `http://localhost:5173` and proxies API requests to the Fla
 - Should providers be able to filter/search by status or DOB?
 - Should the table be sortable by columns (e.g. last name, DOB)?
 - Should providers be able to click into a detailed view of a patient?
-- Will multi-provider support (multi-tenancy) be needed?
 
 ---
 
