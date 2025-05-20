@@ -46,6 +46,8 @@ function App() {
   const [password, setPassword] = useState("");
   const [providerId, setProviderId] = useState<number | null>(null);
   const [isSignup, setIsSignup] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const storedId = localStorage.getItem("provider_id");
@@ -116,6 +118,26 @@ function App() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Reset any previous error
+
+    if (isEditing && editingId !== null) {
+      fetch(`/api/patients/${editingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Update failed");
+          return res.json();
+        })
+        .then(() => {
+          setForm(defaultForm);
+          setIsEditing(false);
+          setEditingId(null);
+          fetchPatients(providerId!);
+        })
+        .catch((err) => setError(err.message));
+      return;
+    }
 
     fetch("/api/patients", {
       method: "POST",
@@ -293,7 +315,7 @@ function App() {
           )}
 
           <Button type="submit" variant="contained" color="primary">
-            Add Patient
+            {isEditing ? "Update Patient" : "Add Patient"}
           </Button>
         </Stack>
       </form>
@@ -310,6 +332,7 @@ function App() {
               <TableCell>DOB</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Address</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -321,6 +344,51 @@ function App() {
                 <TableCell>{p.dob}</TableCell>
                 <TableCell>{p.status}</TableCell>
                 <TableCell>{p.address}</TableCell>
+                <TableCell>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => {
+                        setForm({
+                          first_name: p.first_name,
+                          middle_name: p.middle_name,
+                          last_name: p.last_name,
+                          dob: p.dob,
+                          status: p.status,
+                          address: p.address,
+                        });
+                        setEditingId(p.id);
+                        setIsEditing(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            "Are you sure you want to delete this patient?"
+                          )
+                        ) {
+                          fetch(`/api/patients/${p.id}`, {
+                            method: "DELETE",
+                          })
+                            .then((res) => {
+                              if (!res.ok) throw new Error("Delete failed");
+                              fetchPatients(providerId!);
+                            })
+                            .catch((err) => setError(err.message));
+                        }
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Stack>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -80,3 +80,27 @@ def handle_patients():
             return jsonify({
                 "error": "Name field is too long. Please shorten and try again."
             }), 400
+
+@app.route("/api/patients/<int:id>", methods=["PATCH"])
+def update_patient(id):
+    db = SessionLocal()
+    data = request.json
+    patient = db.query(Patient).get(id)
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+
+    for field in ["first_name", "middle_name", "last_name", "dob", "status", "address"]:
+        if field in data:
+            setattr(patient, field, data[field].strip() if isinstance(data[field], str) else data[field])
+    db.commit()
+    return jsonify(patient.to_dict())
+
+@app.route("/api/patients/<int:id>", methods=["DELETE"])
+def delete_patient(id):
+    db = SessionLocal()
+    patient = db.query(Patient).get(id)
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+    db.delete(patient)
+    db.commit()
+    return jsonify({"message": "Patient deleted"}), 200
