@@ -1,4 +1,4 @@
-# 🩺 Patient Dashboard (Finni Take-Home)
+# 🩺 Patient Dashboard
 
 A simple full-stack CRUD app for managing patient records. Built with **React (Vite + TypeScript)** on the frontend and **Flask + SQLite (via SQLAlchemy)** on the backend.
 
